@@ -95,13 +95,16 @@ export const EPI_SIZES = [
   {
     id: "number",
     option: "Pequeno",
+    value: "pequeno",
   },
   {
     id: "number",
     option: "Médio",
+    value: "medio",
   },
   {
     id: "number",
     option: "Grande",
+    value: "grande",
   },
 ];

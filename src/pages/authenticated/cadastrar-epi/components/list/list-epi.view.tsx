@@ -1,3 +1,4 @@
+import Button from "../../../../../shared/components/button";
 import type { ListViewProps } from "./list.types";
 
 export function ListView(props: ListViewProps) {
@@ -19,6 +20,9 @@ export function ListView(props: ListViewProps) {
                 <td className="px-3 py-1 ">{epi.nome}</td>
                 <td className="px-3 py-1">{epi.preco}</td>
                 <td className="px-3 py-1">{epi.tamanho}</td>
+                <td className="px-3 py-1">
+                  <Button>Editar</Button>
+                </td>
               </tr>
             );
           })}
