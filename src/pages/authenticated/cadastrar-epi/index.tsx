@@ -1,7 +1,9 @@
-import { EPI_DATA } from "../../../apiMock/epis";
+import { EPI_DATA, EPI_SIZES } from "../../../apiMock/epis";
 import Button from "../../../shared/components/button";
-import { Form } from "./components/form";
+
 import { List } from "./components/list";
+import NewForm from "./components/newForm";
+import FORM_EPI_INPUTS from "./components/newForm/data/inputs";
 
 export default function CadastrarEpi() {
   return (
@@ -13,7 +15,34 @@ export default function CadastrarEpi() {
       </div>
 
       {/* Formulário */}
-      <Form />
+      <NewForm
+        children={
+          <>
+            {FORM_EPI_INPUTS.map((infoForms, id) => {
+              return (
+                <input
+                  key={id}
+                  placeholder={infoForms.placeholder}
+                  type={infoForms.type}
+                  name={infoForms.name}
+                  id={infoForms.id}
+                  className="bg-white px-3 rounded-md border border-blue-400 w-full"
+                  min={infoForms.min}
+                />
+              );
+            })}
+            <select className="bg-white px-3 rounded-md border border-blue-400 w-full">
+              {EPI_SIZES.map((selecao, id) => {
+                return (
+                  <option key={id} value="">
+                    {selecao.option}
+                  </option>
+                );
+              })}
+            </select>
+          </>
+        }
+      />
 
       {/* Tabela com os EPIs cadastrados */}
       <List data={EPI_DATA} />
