@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { items } from "./types";
-import Button from "../../../components/button";
+
+import Button from "../button";
+import { items } from "../../layout/authenticatedLayout/NavPage/types";
 
 
 export default function NavPage() {
