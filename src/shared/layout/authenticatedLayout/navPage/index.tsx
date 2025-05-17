@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
+
 import Button from "../../../components/button";
-import { items } from "../../../constants/navConstants";
+import { items } from "./Items";
 
 export default function NavPage() {
   const navigate = useNavigate();

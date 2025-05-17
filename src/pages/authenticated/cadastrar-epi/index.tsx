@@ -1,160 +1,165 @@
 import { useState } from "react";
 import { EPI_DATA, EPI_SIZES } from "../../../apiMock/epis";
 import Button from "../../../shared/components/button";
-import HeaderPages from "../../../shared/components/headerPages";
-
-import NewForm from "./components/newForm";
-
-import type { EPI } from "../../../data/types/epis";
-import NewList from "./components/newList";
+import HeaderComponent from "../../../shared/components/HeaderComponent";
+import NewForm from "../../../shared/components/newForm";
+import Input from "../../../shared/components/Inputs";
+import Select from "../../../shared/components/Select";
+import NewList from "../../../shared/components/newList";
+import type { Epi } from "../../../data/types/Epi";
 
 export default function CadastrarEpi() {
-  const regexNumero = /^\d*$/;
-  const [idSelecionado, setIdSelecionado] = useState<number>(0);
-  const [editarOuNovo, setEditarOuNovo] = useState<"editar" | "novo">("novo");
-  const [epis, setEpis] = useState<EPI[]>(EPI_DATA);
-  const [showForm, setShowForm] = useState<boolean>(false);
-  const [epiNome, setEpiNome] = useState<string>("");
-  const [epiPreco, setEpiPreco] = useState<string>("");
+  const [abrirForm, setAbrirForm] = useState<boolean>(false);
+  const [listaEpi, setListaEpi] = useState<Epi[]>(EPI_DATA);
+  const [nomeEpi, setNomeEpi] = useState<string>("");
+  const [valorEpi, setValorEpi] = useState<number>(0);
   const [epiTamanho, setEpiTamanho] = useState<string>("");
+  const [tipo, setTipo] = useState<"Criar" | "Editar">("Criar");
+  const [idEpiSelecionado, setIdEpiSelecionado] = useState<number>(0);
 
-  const clearInputs = () => {
-    setEpiNome("");
-    setEpiPreco("");
+  const adicionarEpi = () => {
+    setTipo("Criar");
+    if (nomeEpi === "" || valorEpi === 0 || epiTamanho === "") {
+      return alert("Preencha todos os campos!");
+    }
+    if (tipo === "Criar") {
+      const dados: Epi = {
+        id: listaEpi.length + 1,
+        nome: nomeEpi,
+        preco: valorEpi,
+        tamanho: epiTamanho,
+      };
+      setListaEpi([...listaEpi, dados]);
+      limparInput();
+    } else {
+      const atualizado = listaEpi.map((epi: Epi) =>
+        epi.id === idEpiSelecionado
+          ? { ...epi, nome: nomeEpi, preco: valorEpi, tamanho: epiTamanho }
+          : epi
+      );
+      setListaEpi(atualizado);
+      limparInput();
+      setAbrirForm(false);
+    }
+  };
+
+  const limparInput = () => {
+    setNomeEpi("");
+    setValorEpi(0);
     setEpiTamanho("");
   };
 
-  const novoEpi = () => {
-    if (epiNome === "" || epiPreco === "" || epiTamanho === "")
-      return alert("Preencha todos os campos!");
-    if (editarOuNovo === "novo") {
-      const novoEpi: EPI = {
-        id: Date.now(),
-        nome: epiNome,
-        preco: parseFloat(epiPreco).toFixed(2),
-        tamanho: epiTamanho,
-      };
-
-      setEpis([...epis, novoEpi]);
-      setShowForm(false);
-      clearInputs();
-    } else {
-      const atualizado = epis.map((epi) =>
-        epi.id === idSelecionado
-          ? { ...epi, nome: epiNome, preco: epiPreco, tamanho: epiTamanho }
-          : epi
-      );
-      setEpis(atualizado);
-      setShowForm(false);
-      clearInputs();
-    }
-  };
-
-  const excluirEpi = (id: number) => {
-    const filtrado = [...epis].filter((epi) => epi.id !== id);
-    setEpis(filtrado);
-  };
-
   const editarEpi = (id: number) => {
-    setEditarOuNovo("editar");
-    const epi = epis.find((epi) => epi.id === id);
-
-    if (epi) {
-      setIdSelecionado(epi.id);
-      setEpiNome(epi.nome);
-      setEpiPreco(epi.preco);
-      setEpiTamanho(epi.tamanho);
-      setShowForm(true);
+    setTipo("Editar");
+    setIdEpiSelecionado(id);
+    const filtro = listaEpi.find((epis) => {
+      return epis.id === id;
+    });
+    if (filtro) {
+      setAbrirForm(true);
+      setNomeEpi(filtro.nome);
+      setValorEpi(filtro.preco);
+      setEpiTamanho(filtro.tamanho);
     }
   };
+  const excluirEpi = (id: number) => {
+    const excluido = listaEpi.filter((epis) => {
+      return epis.id !== id;
+    });
+    setListaEpi(excluido);
+  };
+
+  const opcao = EPI_SIZES.map((item, id) => ({
+    id: id,
+    option: item.option,
+  }));
 
   return (
     <section className="border-t-2 border-gray-300">
       {/* Header da página de cadastro de EPI */}
-      <HeaderPages
-        title="Cadastrar EPI"
-        showChildren
-        children={
-          <Button
-            onClick={() => {
-              clearInputs();
-              setShowForm(!showForm);
-            }}
-          >
-            Novo EPI
-          </Button>
-        }
+      <HeaderComponent
+        titulo="Cadastrar EPI"
+        tituloBotao="Cadastrar"
+        verBotao={true}
+        cliqueDoBotao={() => {
+          setAbrirForm(!abrirForm);
+          setTipo("Criar");
+        }}
       />
 
       {/* Formulário */}
-      {showForm && (
-        <NewForm
-          children={
-            <>
-              <input
-                placeholder="Digite o EPI"
-                type="text"
-                name="EPI"
-                value={epiNome}
-                id="number"
-                className="bg-white px-3 rounded-md border border-blue-400 w-full"
-                onChange={(e) => setEpiNome(e.target.value)}
-              />
-              <input
-                placeholder="Digite o valor"
-                type="text"
-                name="valor"
-                value={epiPreco}
-                id="number"
-                className="bg-white px-3 rounded-md border border-blue-400 w-full"
-                min="0"
-                onChange={(e) => {
-                  if (regexNumero.test(e.target.value))
-                    setEpiPreco(e.target.value);
-                }}
-              />
-              <select
-                value={epiTamanho}
-                onChange={(e) => setEpiTamanho(e.target.value)}
-                className="bg-white px-3 rounded-md border border-blue-400 w-full"
-              >
-                {EPI_SIZES.map((selecao, id) => {
-                  return (
-                    <option key={id} value={selecao.option}>
-                      {selecao.option}
-                    </option>
-                  );
-                })}
-              </select>
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
+      {abrirForm === true && (
+        <>
+          <NewForm
+            children={
+              <>
+                <Input
+                  placeholder="Digite o EPI"
+                  type="text"
+                  name="EPI"
+                  id="number"
+                  value={nomeEpi}
+                  onChange={(e) => {
+                    setNomeEpi(e.target.value);
+                  }}
+                />
+                <Input
+                  placeholder="Digite o valor"
+                  type="number"
+                  name="Valor"
+                  id="number"
+                  min={"0"}
+                  value={valorEpi}
+                  onChange={(e) => {
+                    setValorEpi(Number(e.target.value));
+                  }}
+                />
+                <Select
+                  onChange={(e) => {
+                    setEpiTamanho(e.target.value);
+                  }}
+                  value={epiTamanho}
+                  options={opcao}
+                  texto={"Selecione o tamanho"}
+                />
 
-                  novoEpi();
-                }}
-              >
-                Salvar
-              </Button>
-            </>
-          }
-        />
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    adicionarEpi();
+                  }}
+                >
+                  Salvar
+                </Button>
+              </>
+            }
+          />
+        </>
       )}
 
-      {/* Tabela com os EPIs cadastrados */}
-      {/* <List data={EPI_DATA} /> */}
       <NewList
-        colunasLista={["EPI", "Preço", "Tamanho", "Opções"]}
-        itensLista={epis.map((epi) => {
+        colunasLista={["Epi", "Preço", "Tamanho", ""]}
+        itensLista={listaEpi.map((epi) => {
           return (
             <tr>
-              <td className="px-3 py-1 ">{epi.nome}</td>
+              <td className="px-3 py-1">{epi.nome}</td>
               <td className="px-3 py-1">{epi.preco}</td>
               <td className="px-3 py-1">{epi.tamanho}</td>
-
-              <td className="px-3 py-1 gap-2 flex">
-                <Button onClick={() => editarEpi(epi.id)}>Editar</Button>
-
-                <Button onClick={() => excluirEpi(epi.id)}>Excluir</Button>
+              <td>
+                <Button
+                  onClick={() => {
+                    editarEpi(epi.id);
+                  }}
+                >
+                  Editar
+                </Button>
+                <Button
+                  onClick={() => {
+                    excluirEpi(epi.id);
+                  }}
+                >
+                  Excluir
+                </Button>
               </td>
             </tr>
           );
