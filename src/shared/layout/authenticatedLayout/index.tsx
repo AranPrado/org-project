@@ -1,8 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Header from "./headerPage";
-import NavPage from "./NavPage";
-
-
+import NavPage from "./navPage";
 
 export default function AuthenticatedLayout() {
   return (

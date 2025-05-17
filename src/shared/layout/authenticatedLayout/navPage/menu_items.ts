@@ -1,4 +1,4 @@
-export const items = [
+export const menu_items = [
   {
     url: "/consultar",
     label: "Consultar",

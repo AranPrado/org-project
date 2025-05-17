@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { items } from "./types";
-import Button from "../../../components/button";
 
+import Button from "../../../components/button";
+import { menu_items } from "./menu_items";
 
 export default function NavPage() {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ export default function NavPage() {
       <h1 className="block border-b border-gray-300 py-2 text-center text-2xl text-gray-500 shadow-lg">
         COOP
       </h1>
-      {items.map((item) => {
+      {menu_items.map((item) => {
         return (
           <Button
             onClick={() => navigate(item.url)}
